@@ -1,13 +1,11 @@
-import { configureStore } from "@reduxjs/toolkit";
-import counterReducer from "./features/counter/counterSlice"
-import logger from "./middlewares/logger";
+import { configureStore } from '@reduxjs/toolkit'
+ import {quizSlice} from "./features/quizSlice"
 export const store = configureStore({
-    reducer : {
-        counter : counterReducer
+  reducer: {
+    quiz : quizSlice.reducer
+  },
+})
 
-    },
-    middleware :(getDefaultMiddleware) => getDefaultMiddleware().concat(logger) 
-});
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
