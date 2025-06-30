@@ -1,12 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import counterReducer from "./features/Counter/counter.slice"
 import taskReducer from "./features/tasks/taskSlice"
-
+import userReducer from "./features/users/userSlice"
 import logger from './middlewares/logger';
 export const store = configureStore({
   reducer: {
      counter : counterReducer,
-     todo : taskReducer
+     todo : taskReducer,
+     userList : userReducer
   },
   
    middleware :(getDefaultMiddleware) => getDefaultMiddleware().concat(logger) 
