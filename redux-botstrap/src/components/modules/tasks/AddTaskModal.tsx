@@ -30,19 +30,25 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { addToTask } from "@/redux/features/tasks/taskSlice";
 import type { ITask } from "@/types";
+import { selectUsers } from "@/redux/features/users/userSlice";
+import { useState } from "react";
 export function AddTaskModal() {
+  const [open, setOpen] = useState(false);
     const form = useForm();
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
+    const users = useAppSelector(selectUsers)
     const onSubmit: SubmitHandler<FieldValues> = (data)  =>{
         console.log(data)
         dispatch(addToTask(data as ITask))
+        setOpen(false);
+        form.reset();
 
     }
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <form>
         <DialogTrigger asChild>
           <Button variant="outline">Add New Task</Button>
@@ -109,13 +115,38 @@ export function AddTaskModal() {
           )}
         />
 
+        {/* addign to */}
+ 
+    <FormField
+          control={form.control}
+          name="assignTo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Assign to</FormLabel>
+              <Select  onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a verified assigned user to display" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {
+                    users.map((user) => <SelectItem value={user.id}>{user.name}</SelectItem>)
+                  }
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         {/* calendar */}
               <FormField
           control={form.control}
-          name="dob"
+          name="dueDate"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Date of birth</FormLabel>
+              <FormLabel>due Date</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -140,16 +171,12 @@ export function AddTaskModal() {
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
+ 
                     captionLayout="dropdown"
                   />
                 </PopoverContent>
               </Popover>
-              <FormDescription>
-                Your date of birth is used to calculate your age.
-              </FormDescription>
+ 
               <FormMessage />
             </FormItem>
           )}
